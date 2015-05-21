@@ -59,4 +59,4 @@ target/
 # Eclipse PyDev
 .project
 .pydevproject
-
+.settings/

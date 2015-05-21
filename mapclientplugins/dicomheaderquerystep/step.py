@@ -2,15 +2,13 @@
 '''
 MAP Client Plugin Step
 '''
-import os
-
 import json
-
 
 from PySide import QtGui
 
 from mapclient.mountpoints.workflowstep import WorkflowStepMountPoint
-from mapclientplugins.dicomheaderquerystep.configuredialog import ConfigureDialog
+from mapclientplugins.dicomheaderquerystep.view.configuredialog import ConfigureDialog
+from mapclientplugins.dicomheaderquerystep.view.dicomheaderwidget import DICOMHeaderWidget
 
 
 class DicomHeaderQueryStep(WorkflowStepMountPoint):
@@ -20,7 +18,7 @@ class DicomHeaderQueryStep(WorkflowStepMountPoint):
     '''
 
     def __init__(self, location):
-        super(DicomHeaderQueryStep, self).__init__('Dicom Header Query', location)
+        super(DicomHeaderQueryStep, self).__init__('DICOM Header Query', location)
         self._configured = False # A step cannot be executed until it has been configured.
         self._category = 'General'
         # Add any other initialisation code here:
@@ -33,7 +31,8 @@ class DicomHeaderQueryStep(WorkflowStepMountPoint):
                       'http://physiomeproject.org/workflow/1.0/rdf-schema#dict'))
         self._config = {}
         self._config['identifier'] = ''
-
+        self._image_data = None
+        self._view = None
 
     def execute(self):
         '''
@@ -41,8 +40,12 @@ class DicomHeaderQueryStep(WorkflowStepMountPoint):
         Make sure you call the _doneExecution() method when finished.  This method
         may be connected up to a button in a widget for example.
         '''
-        # Put your execute step code here before calling the '_doneExecution' method.
-        self._doneExecution()
+        if not self._view:
+            self._view = DICOMHeaderWidget()
+            self._view.registerDoneExecution(self._doneExecution)
+
+        self._view.setImageData(self._image_data)
+        self._setCurrentWidget(self._view)
 
     def setPortData(self, index, dataIn):
         '''
@@ -50,7 +53,7 @@ class DicomHeaderQueryStep(WorkflowStepMountPoint):
         The index is the index of the port in the port list.  If there is only one
         uses port for this step then the index can be ignored.
         '''
-        portData0 = dataIn # http://physiomeproject.org/workflow/1.0/rdf-schema#images
+        self._image_data = dataIn # http://physiomeproject.org/workflow/1.0/rdf-schema#images
 
     def getPortData(self, index):
         '''
@@ -58,8 +61,11 @@ class DicomHeaderQueryStep(WorkflowStepMountPoint):
         The index is the index of the port in the port list.  If there is only one
         provides port for this step then the index can be ignored.
         '''
-        portData1 = None # http://physiomeproject.org/workflow/1.0/rdf-schema#dict
-        return portData1
+        port_data = None # http://physiomeproject.org/workflow/1.0/rdf-schema#dict
+        if self._view:
+            port_data = self._view.getStoredQueries()
+
+        return port_data
 
     def configure(self):
         '''
@@ -69,7 +75,7 @@ class DicomHeaderQueryStep(WorkflowStepMountPoint):
         then set:
             self._configured = True
         '''
-        dlg = ConfigureDialog()
+        dlg = ConfigureDialog(QtGui.QApplication.activeWindow().currentWidget())
         dlg.identifierOccursCount = self._identifierOccursCount
         dlg.setConfig(self._config)
         dlg.validate()
