@@ -1,9 +1,10 @@
 from setuptools import setup, find_packages
+from mapclientplugins.dicomheaderquerystep import __version__ as version
 
 dependencies = ['pydicom']
 
 setup(name=u'mapclientplugins.dicomheaderquerystep',
-      version='0.0',
+      version=version,
       description='',
       long_description="",
       classifiers=[],
