@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-dependencies = ['pydicom']
+requirements = ['pydicom']
 
 setup(name=u'mapclientplugins.dicomheaderquerystep',
       version='0.1.0',
@@ -15,5 +15,5 @@ setup(name=u'mapclientplugins.dicomheaderquerystep',
       namespace_packages=['mapclientplugins'],
       include_package_data=True,
       zip_safe=False,
-      install_requires=dependencies,
+      install_requires=requirements,
       )
