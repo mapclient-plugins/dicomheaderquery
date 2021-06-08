@@ -11,11 +11,13 @@ from PySide2 import QtWidgets
 
 from mapclientplugins.dicomheaderquerystep.view.ui_dicomheaderwidget import Ui_DicomHeaderWidget
 
+
 def tryint(s):
     try:
         return int(s)
     except:
         return s
+
 
 def alphanum_key(s):
     """ Turn a string into a list of string and number chunks.
@@ -23,8 +25,9 @@ def alphanum_key(s):
     """
     return [tryint(c) for c in re.split('([0-9]+)', s)]
 
+
 class DICOMHeaderWidget(QtWidgets.QWidget):
-    
+
     def __init__(self, parent=None):
         super(DICOMHeaderWidget, self).__init__(parent)
         self._ui = Ui_DicomHeaderWidget()
@@ -37,7 +40,7 @@ class DICOMHeaderWidget(QtWidgets.QWidget):
         self._makeConnections()
         self._active_ds = None
         self._active_combo_box = None
-        
+
     def _makeConnections(self):
         self._ui.pushButtonQuery.clicked.connect(self._queryButtonClicked)
         self._ui.comboBoxDICOMImage.currentIndexChanged.connect(self._DICOMImageChanged)
@@ -47,10 +50,10 @@ class DICOMHeaderWidget(QtWidgets.QWidget):
         self._ui.pushButtonRemove.clicked.connect(self._removeButtonClicked)
         selection_model = self._ui.tableWidgetSavedQueries.selectionModel()
         selection_model.selectionChanged.connect(self._saveQueriesSelectionChanged)
-        
+
     def _DICOMQueryChanged(self):
         self._active_combo_box = self.sender()
-        
+
     def _queryButtonClicked(self):
         if self._active_ds:
             text = str(self._active_combo_box.currentText())
@@ -60,7 +63,7 @@ class DICOMHeaderWidget(QtWidgets.QWidget):
                 data_element = self._active_ds[code_1[1:], code_2[:-1]]
             else:
                 data_element = self._active_ds.data_element(text)
-                
+
             # Set all settings
             self._ui.labelHiddenImage.setText(self._ui.comboBoxDICOMImage.currentText())
             if self._active_combo_box == self._ui.comboBoxDICOMKeyword:
@@ -74,7 +77,7 @@ class DICOMHeaderWidget(QtWidgets.QWidget):
             self._ui.lineEditElementRepresentation.setText(data_element.VR)
             self._ui.lineEditElementMultiplicity.setText(str(data_element.VM))
             self._ui.lineEditElementValue.setText(str(data_element.value))
-    
+
     def _storeButtonClicked(self):
         image = self._ui.labelHiddenImage.text()
         tag = self._ui.labelHiddenTag.text()
@@ -85,35 +88,35 @@ class DICOMHeaderWidget(QtWidgets.QWidget):
         mult = self._ui.lineEditElementMultiplicity.text()
         if image and tag and name:
             self._addTableRow(image, tag, keyword, name, representation, value, mult)
-    
+
     def _removeButtonClicked(self):
         selected_items = self._ui.tableWidgetSavedQueries.selectedItems()
         item = selected_items[0]
         self._ui.tableWidgetSavedQueries.removeRow(item.row())
-    
+
     def _saveQueriesSelectionChanged(self):
         selected_items = self._ui.tableWidgetSavedQueries.selectedItems()
         if selected_items:
             self._ui.pushButtonRemove.setEnabled(True)
         else:
             self._ui.pushButtonRemove.setEnabled(False)
-    
+
     def _DICOMImageChanged(self):
         dicom_image = os.path.join(self._image_data.location(), self._ui.comboBoxDICOMImage.currentText())
         self._active_ds = dicom.read_file(dicom_image)
-        
+
         self._ui.comboBoxDICOMTag.blockSignals(True)
         self._ui.comboBoxDICOMTag.clear()
         self._ui.comboBoxDICOMTag.blockSignals(False)
         self._ui.comboBoxDICOMTag.addItems([str(key) for key in self._active_ds.keys()])
-        
+
         self._ui.comboBoxDICOMKeyword.blockSignals(True)
         self._ui.comboBoxDICOMKeyword.clear()
         self._ui.comboBoxDICOMKeyword.blockSignals(False)
         self._ui.comboBoxDICOMKeyword.addItems(self._active_ds.dir())
-        
+
         self._active_combo_box = self._ui.comboBoxDICOMTag
-    
+
     def _addTableRow(self, image, tag, keyword, name, representation, value, mult):
         data = [image, tag, keyword, name, representation, value, mult]
         row = self._ui.tableWidgetSavedQueries.rowCount()
@@ -121,15 +124,15 @@ class DICOMHeaderWidget(QtWidgets.QWidget):
         for col, data_item in enumerate(data):
             item = QtWidgets.QTableWidgetItem(data_item)
             self._ui.tableWidgetSavedQueries.setItem(row, col, item)
-            
+
     def registerDoneExecution(self, callback):
         self._ui.pushButtonDone.clicked.connect(callback)
-        
+
     def setImageData(self, image_data):
         self._ui.comboBoxDICOMImage.blockSignals(True)
         self._ui.comboBoxDICOMImage.clear()
         self._ui.comboBoxDICOMImage.blockSignals(False)
-        
+
         self._image_data = image_data
         # Get list of images?
         directory = image_data.location()
@@ -137,7 +140,7 @@ class DICOMHeaderWidget(QtWidgets.QWidget):
         files.sort(key=alphanum_key)
         files = [image_file for image_file in files if image_file not in ['.hg', '.git', 'annotation.rdf']]
         self._ui.comboBoxDICOMImage.addItems(files)
-        
+
     def getStoredQueries(self):
         queries = {}
         rows = self._ui.tableWidgetSavedQueries.rowCount()
@@ -155,7 +158,5 @@ class DICOMHeaderWidget(QtWidgets.QWidget):
                         queries[image] = [{header_item.text(): image}]
                 else:
                     queries[image][-1][header_item.text()] = item.text()
-                
-        return queries
 
-        
+        return queries

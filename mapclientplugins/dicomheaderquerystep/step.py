@@ -1,4 +1,3 @@
-
 '''
 MAP Client Plugin Step
 '''
@@ -19,7 +18,7 @@ class DicomHeaderQueryStep(WorkflowStepMountPoint):
 
     def __init__(self, location):
         super(DicomHeaderQueryStep, self).__init__('DICOM Header Query', location)
-        self._configured = False # A step cannot be executed until it has been configured.
+        self._configured = False  # A step cannot be executed until it has been configured.
         self._category = 'General'
         # Add any other initialisation code here:
         # Ports:
@@ -53,7 +52,7 @@ class DicomHeaderQueryStep(WorkflowStepMountPoint):
         The index is the index of the port in the port list.  If there is only one
         uses port for this step then the index can be ignored.
         '''
-        self._image_data = dataIn # http://physiomeproject.org/workflow/1.0/rdf-schema#images
+        self._image_data = dataIn  # http://physiomeproject.org/workflow/1.0/rdf-schema#images
 
     def getPortData(self, index):
         '''
@@ -61,7 +60,7 @@ class DicomHeaderQueryStep(WorkflowStepMountPoint):
         The index is the index of the port in the port list.  If there is only one
         provides port for this step then the index can be ignored.
         '''
-        port_data = None # http://physiomeproject.org/workflow/1.0/rdf-schema#dict
+        port_data = None  # http://physiomeproject.org/workflow/1.0/rdf-schema#dict
         if self._view:
             port_data = self._view.getStoredQueries()
 
@@ -80,10 +79,10 @@ class DicomHeaderQueryStep(WorkflowStepMountPoint):
         dlg.setConfig(self._config)
         dlg.validate()
         dlg.setModal(True)
-        
+
         if dlg.exec_():
             self._config = dlg.getConfig()
-        
+
         self._configured = dlg.validate()
         self._configuredObserver()
 
@@ -106,7 +105,6 @@ class DicomHeaderQueryStep(WorkflowStepMountPoint):
         '''
         return json.dumps(self._config, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
-
     def deserialize(self, string):
         '''
         Add code to deserialize this step from string.  This method should
@@ -118,5 +116,3 @@ class DicomHeaderQueryStep(WorkflowStepMountPoint):
         d.identifierOccursCount = self._identifierOccursCount
         d.setConfig(self._config)
         self._configured = d.validate()
-
-
