@@ -3,8 +3,6 @@ MAP Client Plugin Step
 '''
 import json
 
-from PySide2 import QtWidgets
-
 from mapclient.mountpoints.workflowstep import WorkflowStepMountPoint
 from mapclientplugins.dicomheaderquerystep.view.configuredialog import ConfigureDialog
 from mapclientplugins.dicomheaderquerystep.view.dicomheaderwidget import DICOMHeaderWidget

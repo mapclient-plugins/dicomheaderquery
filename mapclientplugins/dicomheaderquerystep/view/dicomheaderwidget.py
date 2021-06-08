@@ -5,7 +5,8 @@ Created on May 20, 2015
 '''
 import os
 import re
-import dicom
+#import dicom
+import pydicom
 
 from PySide2 import QtWidgets
 
@@ -103,7 +104,8 @@ class DICOMHeaderWidget(QtWidgets.QWidget):
 
     def _DICOMImageChanged(self):
         dicom_image = os.path.join(self._image_data.location(), self._ui.comboBoxDICOMImage.currentText())
-        self._active_ds = dicom.read_file(dicom_image)
+        #self._active_ds = dicom.read_file(dicom_image)
+        self._active_ds = pydicom.read_file(dicom_image)
 
         self._ui.comboBoxDICOMTag.blockSignals(True)
         self._ui.comboBoxDICOMTag.clear()
