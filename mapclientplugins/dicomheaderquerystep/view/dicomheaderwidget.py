@@ -7,7 +7,7 @@ import os
 import re
 import dicom
 
-from PySide import QtGui
+from PySide2 import QtWidgets
 
 from mapclientplugins.dicomheaderquerystep.view.ui_dicomheaderwidget import Ui_DicomHeaderWidget
 
@@ -23,7 +23,7 @@ def alphanum_key(s):
     """
     return [tryint(c) for c in re.split('([0-9]+)', s)]
 
-class DICOMHeaderWidget(QtGui.QWidget):
+class DICOMHeaderWidget(QtWidgets.QWidget):
     
     def __init__(self, parent=None):
         super(DICOMHeaderWidget, self).__init__(parent)
@@ -32,7 +32,7 @@ class DICOMHeaderWidget(QtGui.QWidget):
         horz_header = self._ui.tableWidgetSavedQueries.horizontalHeader()
         cols = self._ui.tableWidgetSavedQueries.columnCount()
         for col in range(cols):
-            horz_header.setResizeMode(col, QtGui.QHeaderView.Stretch)
+            horz_header.setResizeMode(col, QtWidgets.QHeaderView.Stretch)
         self._image_data = None
         self._makeConnections()
         self._active_ds = None
@@ -119,7 +119,7 @@ class DICOMHeaderWidget(QtGui.QWidget):
         row = self._ui.tableWidgetSavedQueries.rowCount()
         self._ui.tableWidgetSavedQueries.insertRow(row)
         for col, data_item in enumerate(data):
-            item = QtGui.QTableWidgetItem(data_item)
+            item = QtWidgets.QTableWidgetItem(data_item)
             self._ui.tableWidgetSavedQueries.setItem(row, col, item)
             
     def registerDoneExecution(self, callback):
