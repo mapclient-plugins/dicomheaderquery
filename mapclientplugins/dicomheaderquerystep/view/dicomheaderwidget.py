@@ -5,7 +5,6 @@ Created on May 20, 2015
 '''
 import os
 import re
-#import dicom
 import pydicom
 
 from PySide2 import QtWidgets
