@@ -7,7 +7,7 @@ import os
 import re
 import pydicom
 
-from PySide2 import QtWidgets
+from PySide6 import QtWidgets
 
 from mapclientplugins.dicomheaderquerystep.view.ui_dicomheaderwidget import Ui_DicomHeaderWidget
 
